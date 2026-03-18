@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:todoist/models/task.dart';
 import 'package:todoist/widgets/task_card.dart';
 
 class TaskCarousel extends StatefulWidget {
-  const TaskCarousel({super.key});
+  const TaskCarousel({super.key, required this.tasks});
+
+  final List<Task> tasks;
 
   @override
   State<TaskCarousel> createState() => _TaskCarouselState();
@@ -29,16 +32,22 @@ class _TaskCarouselState extends State<TaskCarousel> {
       height: 180, // Set based on your card design
       child: PageView.builder(
         controller: _pageController,
-        itemCount: 3,
+        itemCount: widget.tasks.length,
         itemBuilder: (context, index) {
-          // 1. Lower multiplier (0.05) makes the transition smoother
-          // 2. Higher clamp (0.95) makes side cards larger/less "zoomed out"
-          double scale = (1 - (_currentPage - index).abs() * 0.05).clamp(0.95, 1.0);
-          return Transform.scale(
-            scale: scale,
+          // Calculate relative position (0.0 when centered)
+          double value = (_currentPage - index).abs();
+
+          // Height scale: 1.0 when centered, 0.8 when on sides
+          double heightScale = (1 - value * 0.2).clamp(0.8, 1.0);
+
+          // Width scale: 1.0 when centered, 0.9 when on sides (less zoom out)
+          double widthScale = (1 - value * 0.1).clamp(0.9, 1.0);
+
+          return Transform(
+            transform: Matrix4.diagonal3Values(widthScale, heightScale, 1.0),
+            alignment: Alignment.center,
             child: TaskCard(
-              // color: index == 1 ? Colors.redAccent : Colors.tealAccent,
-              // title: index == 1 ? "Mobile App Design" : "Website Design",
+              task: widget.tasks[index],
             ),
           );
         },

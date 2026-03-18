@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todoist/data/dummy_tasks.dart';
 import 'package:todoist/widgets/carousel/task_carousel.dart';
-import 'package:todoist/widgets/scroll/singlechild_scroll.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -38,7 +38,9 @@ class HomeScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.only(top: 30),
-            child: TaskCarousel(),
+            child: TaskCarousel(
+              tasks: dummyTasks,
+            ),
           ),
         ],
       ),
